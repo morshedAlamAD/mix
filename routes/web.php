@@ -55,3 +55,4 @@ Route::middleware('auth')->group(function () {
 });
 Route::view('hello', 'livewire.hello');
 Route::post('/books',[App\Http\Controllers\BooksController::class,'store'] );
+Route::patch('/books/{books}',[App\Http\Controllers\BooksController::class,'update'] );

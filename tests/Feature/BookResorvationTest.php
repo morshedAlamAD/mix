@@ -21,16 +21,43 @@ class BookResorvationTest extends TestCase
        $response= $this->post('/books',[
             'title'=>'Cool Book Title',
             'author'=>'Adnan',
-
         ]);
         $response->assertOk();
         $this->assertCount(1, Books::all());
     }
-     public function test_a_basic_request()
-    {
-        $response = $this->get('/');
 
-        $response->assertStatus(200);
+    public function test_the_title_validation()
+    {
+        $response= $this->post('/books',[
+             'title'=>'',
+             'author'=>'Adnan',
+         ]);
+         $response->assertSessionHasErrors('title');
+    }
+    /** @test */
+    public function the_author_validation()
+    {
+        $response= $this->post('/books',[
+             'title'=>'Cool book title.',
+             'author'=>'',
+         ]);
+         $response->assertSessionHasErrors('author');
+    }
+    /** @test */
+    public function the_post_edit_test()
+    {
+        $this->withoutExceptionHandling();
+        $response= $this->post('/books',[
+             'title'=>'Cool book title.',
+             'author'=>'adnan',
+         ]);
+         $book=Books::first();
+          $response= $this->patch('/books/'. $book->id,[
+             'title'=>'new title',
+             'author'=>'new author',
+         ]);
+         $this->assertEquals('new title', Books::first()->title);
+         $this->assertEquals('new author', Books::first()->author);
     }
 
 }
