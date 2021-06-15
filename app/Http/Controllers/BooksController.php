@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Books;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class BooksController extends Controller
 {
@@ -14,17 +15,17 @@ class BooksController extends Controller
      */
     public function index()
     {
-        //
+       // 
     }
 
     /**
      * Show the form for creating a new resource.
-     *
+     //*
      * @return \Illuminate\Http\Response
      */
     public function create()
     {
-        //
+       //
     }
 
     /**
@@ -33,14 +34,16 @@ class BooksController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Books $books)
     {
 
     $data=request()->validate([
-        'title' => 'required|max:200',
+        'title' => 'required|unique:books|max:200',
+        'slug' => 'nullable',
         'author'=> 'required',
     ]);
-        $books= Books::create($data);
+        $books->create($data);
+        return redirect('/books/'. $books->slug);
     }
 
     /**
@@ -76,10 +79,12 @@ class BooksController extends Controller
     {
 
         $data=request()->validate([
-            'title' => 'required|max:200',
+            'title' => 'required|unique:books|max:200',
+            'slug'=>'nullable',
             'author'=> 'required',
         ]);
         $books->update($data);
+        return redirect($books->path());
     }
 
     /**
@@ -90,6 +95,10 @@ class BooksController extends Controller
      */
     public function destroy(Books $books)
     {
-        //
+        $books->delete();
+        return redirect('/books');
+    }
+    public function test($slug){
+        $books= Books::where('slug', $slug);
     }
 }
